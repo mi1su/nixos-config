@@ -4,9 +4,37 @@
     xwayland.enable = true;
 
     settings = {
+#--- КЛАВИША МОДИФИКАТОР ------------------------------------------------------
       "$mainMod" = "SUPER";
 
-      monitor = ",1920x1080@90,auto,1";
+#--- ПЕРЕМЕННЫЕ ---------------------------------------------------------------
+      ###################
+      ### MY PROGRAMS ###
+      ###################
+
+      # See https://wiki.hyprland.org/Configuring/Keywords/
+
+      # Set programs that you use
+      "$terminal" = "kitty";
+      "$fileManager" = "dolphin";
+      "$menu" = "wofi --show drun";
+
+#--- НАСТРОЙКА МОНИТОРОВ ------------------------------------------------------
+      ################
+      ### MONITORS ###
+      ################
+
+      # See https://wiki.hyprland.org/Configuring/Monitors/
+
+      monitor = ",preferred,auto";
+      monitor = ",preferred,auto,1";
+
+#--- ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ -----------------------------------------------------
+      #############################
+      ### ENVIRONMENT VARIABLES ###
+      #############################
+
+      # See https://wiki.hyprland.org/Configuring/Environment-variables/
 
       env = [
         "XDG_CURRENT_DESKTOP,Hyprland"
@@ -22,10 +50,17 @@
         enable_stdout_logs = true;
       };
 
+#--- УСТРОЙСТВА ВВОДА ---------------------------------------------------------
+      #############
+      ### INPUT ###
+      #############
+
+      # https://wiki.hyprland.org/Configuring/Variables/#input
+
       input = {
         kb_layout = "us,ru";
         kb_variant = "lang";
-        kb_options = "grp:caps_toggle";
+        kb_options = "grp:alt_shift_toggle";
 
         follow_mouse = 1;
 
@@ -34,28 +69,53 @@
         };
 
         sensitivity = 0; # -1.0 - 1.0, 0 means no modification.
+
+        numlock_by_default = true ;
       };
+
+#--- НАСТРОЙКА УСТРОЙСТВ ------------------------------------------------------
+
+      # device = {
+      #   name = "epic-mouse-v1";
+      #   sensitivity = "-0.5";
+      # }
+
+#--- ГАПСЫ, БОРДЕРЫ, ЦВЕТА... -------------------------------------------------
+      #####################
+      ### LOOK AND FEEL ###
+      #####################
+
+      # Refer to https://wiki.hyprland.org/Configuring/Variables/
+
+      # https://wiki.hyprland.org/Configuring/Variables/#general
 
       general = {
         gaps_in = 5;
         gaps_out = 20;
-        border_size = 3;
-        "col.active_border" = "rgba(33ccffee) rgba(00ff99ee) 45deg";
-        "col.inactive_border" = "rgba(595959aa)";
+        border_size = 2;
+        "col.active_border" = "rgba(f2cdcdee) rgba(f5e0dcee) 45deg";
+        "col.inactive_border" = "rgba(1e1e2eff)";
+        resize_on_border = false;
+        allow_tearing = false;
 
         layout = "dwindle";
 
         no_cursor_warps = false;
       };
 
+#--- ДЕКОРАЦИИ ОКОН -----------------------------------------------------------
       decoration = {
         rounding = 10;
+
+        active_opacity = 1.0;
+        inactive_opacity = 1.0;
 
         blur = {
           enabled = true;
           size = 16;
           passes = 2;
           new_optimizations = true;
+          vibrancy = 0.1696
         };
 
         drop_shadow = true;
@@ -64,6 +124,7 @@
         "col.shadow" = "rgba(1a1a1aee)";
       };
 
+#--- АНИМАЦИИ -----------------------------------------------------------------
       animations = {
         enabled = true;
 
@@ -80,6 +141,7 @@
         ];
       };
 
+#--- НАСТРОЙКА ЛАЙОУТОВ -------------------------------------------------------
       dwindle = {
         pseudotile = true; # master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
         preserve_split = true; # you probably want this
@@ -89,6 +151,7 @@
         new_is_master = true;
       };
 
+#--- ЖЕСТЫ --------------------------------------------------------------------
       gestures = {
         workspace_swipe = true;
         workspace_swipe_fingers = 3;
@@ -97,6 +160,7 @@
         workspace_swipe_forever = true;
       };
 
+#--- ВКЛЮЧИТЬ ДЕФОЛТНЫЕ ОБОИ --------------------------------------------------
       misc = {
         animate_manual_resizes = true;
         animate_mouse_windowdragging = true;
@@ -105,20 +169,45 @@
         disable_hyprland_logo = true;
       };
 
+#--- ПРАВИЛА ОКОН -------------------------------------------------------------
+# hyprctl clients - что бы узнать класс приложения
+      ##############################
+      ### WINDOWS AND WORKSPACES ###
+      ##############################
+
+      # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
+      # See https://wiki.hyprland.org/Configuring/Workspace-Rules/ for workspace rules
+
       windowrule = [
         "float, ^(imv)$"
         "float, ^(mpv)$"
       ];
 
+#--- АВТОСТАРТ ----------------------------------------------------------------
+      #################
+      ### AUTOSTART ###
+      #################
+
+      # Autostart necessary processes (like notifications daemons, status bars, etc.)
+      # Or execute your favorite apps at launch like this:
+
       exec-once = [
         "swww init"
         "swww img ~/Downloads/nixos-chan.png"
-        "waybar"
+        "waybar & mako & firefox & pipewire"
+        "telegram-desktop -startintray"
         "wl-paste --type text --watch cliphist store"
         "wl-paste --type image --watch cliphist store"
       ];
 
+      ####################
+      ### KEYBINDINGSS ###
+      ####################
+
+      # See https://wiki.hyprland.org/Configuring/Keywords/
+
       bind = [
+#--- ЗАПУСК ПРИЛОЖЕНИЙ --------------------------------------------------------
         "$mainMod, V, exec, cliphist list | wofi --dmenu | cliphist decode | wl-copy"
 
         "$mainMod, Return, exec, alacritty"
@@ -130,24 +219,39 @@
         "$mainMod, P, pseudo, # dwindle"
         "$mainMod, J, togglesplit, # dwindle"
 
+#--- ПЕРЕКЛЮЧЕНИЕ ФОКУСА ------------------------------------------------------
         # Move focus with mainMod + arrow keys
         "$mainMod, left,  movefocus, l"
         "$mainMod, right, movefocus, r"
         "$mainMod, up,    movefocus, u"
         "$mainMod, down,  movefocus, d"
 
+#--- ПЕРЕМЕЩЕНИЕ ПЛАВАЮЩИИХ ОКОН ----------------------------------------------
+        "$mainMod ALT, right, moveactive, 50 0"
+        "$mainMod ALT, left, moveactive, -50 0"
+        "$mainMod ALT, up, moveactive, 0 -50"
+        "$mainMod ALT, down, moveactive, 0 50"
+
+#--- ПЕРЕМЕЩЕНИЕ ОКОН --------------------------------------------------------
         # Moving windows
         "$mainMod SHIFT, left,  swapwindow, l"
         "$mainMod SHIFT, right, swapwindow, r"
         "$mainMod SHIFT, up,    swapwindow, u"
         "$mainMod SHIFT, down,  swapwindow, d"
 
+#--- СКРАЧПАД -----------------------------------------------------------------
+        # Example special workspace (scratchpad)
+        "$mainMod, S, togglespecialworkspace, magic"
+        "$mainMod SHIFT, S, movetoworkspace, special:magic"
+
+#--- РЕСАЙЗ -------------------------------------------------------------------
         # Window resizing                     X  Y
         "$mainMod CTRL, left,  resizeactive, -60 0"
         "$mainMod CTRL, right, resizeactive,  60 0"
         "$mainMod CTRL, up,    resizeactive,  0 -60"
         "$mainMod CTRL, down,  resizeactive,  0  60"
 
+#--- ПЕРЕКЛЮЧЕНИЕ ВОРКСПЕЙСОВ -------------------------------------------------
         # Switch workspaces with mainMod + [0-9]
         "$mainMod, 1, workspace, 1"
         "$mainMod, 2, workspace, 2"
@@ -160,6 +264,7 @@
         "$mainMod, 9, workspace, 9"
         "$mainMod, 0, workspace, 10"
 
+#--- ПЕРЕМЕЩЕНИЕ ОКОН НА ДРУГОЙ ВОРКСПЕЙС -------------------------------------
         # Move active window to a workspace with mainMod + SHIFT + [0-9]
         "$mainMod SHIFT, 1, movetoworkspacesilent, 1"
         "$mainMod SHIFT, 2, movetoworkspacesilent, 2"
@@ -172,6 +277,7 @@
         "$mainMod SHIFT, 9, movetoworkspacesilent, 9"
         "$mainMod SHIFT, 0, movetoworkspacesilent, 10"
 
+#--- ПЕРЕХОД ПО ВОРКСПЕЙСАМ КОЛЕСОМ МЫШИ --------------------------------------
         # Scroll through existing workspaces with mainMod + scroll
         "$mainMod, mouse_down, workspace, e+1"
         "$mainMod, mouse_up, workspace, e-1"
@@ -205,6 +311,7 @@
         "$mainMod Shift, G, exec, ~/.config/hypr/gamemode.sh "
       ];
 
+#--- ПЕРЕМЕЩЕНИЕ И РЕСАЙЗ ОКОН МЫШЬЮ ------------------------------------------
       # Move/resize windows with mainMod + LMB/RMB and dragging
       bindm = [
         "$mainMod, mouse:272, movewindow"
